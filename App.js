@@ -5,28 +5,12 @@
  */
 
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
-
-import Home from './app/screens/Home';
+import AppStackNavigator from './app/config/router';
 
 export default class App extends Component {
   render() {
     return (
-      <Home />
+      <AppStackNavigator />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  }
-});
