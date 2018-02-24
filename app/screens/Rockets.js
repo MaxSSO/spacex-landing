@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+
+import Subheader from '../components/Subheader';
+import RocketItem from '../components/RocketItem';
 
 export default class Rockets extends Component {
   static navigationOptions = {
@@ -10,14 +13,14 @@ export default class Rockets extends Component {
     super(props);
     this.state = {
       isLoading: true,
-      spacexInfo: null
+      rockets: null
     };
   }
 
   async componentDidMount() {
-    const response = await fetch('https://api.spacexdata.com/v2/info');
-    const spacexInfo = await response.json();
-    this.setState({ isLoading: false, spacexInfo });
+    const response = await fetch('https://api.spacexdata.com/v2/rockets');
+    const rockets = await response.json();
+    this.setState({ isLoading: false, rockets });
   }
 
   render() {
@@ -27,11 +30,36 @@ export default class Rockets extends Component {
           <ActivityIndicator />
         </View>
       );
-    } else {
-      return (
-        <Text>Rockets Component! {this.state.spacexInfo.founder}</Text>
-      );
     }
-    
+
+    return (
+      <View style={styles.container}>
+        <Subheader text={`rockets ${this.state.rockets.length}`}/>
+        <FlatList
+          data={this.state.rockets}
+          renderItem={({item}) => (
+            <RocketItem 
+              name={item.name} 
+              description={item.description}
+              type={item.type}
+              active={item.active}
+              costPerLaunch={item.cost_per_launch}
+              successRate={item.success_rate_pct}
+              country={item.country}
+              height={item.height.meters}
+              diameter={item.diameter.meters}
+              mass={item.mass.kg}
+            />
+          )}
+          keyExtractor={item => item.id}
+        />
+      </View>
+    );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  }
+});
