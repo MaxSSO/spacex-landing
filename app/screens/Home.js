@@ -21,25 +21,33 @@ const launchpadIcon = require('../assets/images/launchpad.png');
 const launchIcon = require('../assets/images/launch.png');
 
 export default class App extends Component {
+  static navigationOptions = {
+    title: 'SpaceX',
+  };
+
   constructor(props) {
     super(props);
     // code here
+    this.goRocketsScreen = this.goRocketsScreen.bind(this);
+    this.goCapsulesScreen = this.goCapsulesScreen.bind(this);
+    this.goLaunchpadsScreen = this.goLaunchpadsScreen.bind(this);
+    this.goLaunchesScreen = this.goLaunchesScreen.bind(this);
   }
 
   goRocketsScreen() {
-    Alert.alert('goRocketsScreen');
+    this.props.navigation.navigate('RocketsScreen');
   }
 
   goCapsulesScreen() {
-    Alert.alert('goCapsulesScreen');
+    this.props.navigation.navigate('CapsulesScreen');
   }
 
   goLaunchpadsScreen() {
-    Alert.alert('goLaunchpadsScreen');
+    this.props.navigation.navigate('LaunchpadsScreen');
   }
 
   goLaunchesScreen() {
-    Alert.alert('goLaunchesScreen');
+    this.props.navigation.navigate('LaunchesScreen');
   }
 
   onChangeTextName() {
@@ -58,7 +66,7 @@ export default class App extends Component {
     return (
       <ScrollView>
         <Image source={{uri: 'https://goo.gl/EVv6yw'}} style={styles.imgCover} />
-        <TitleBox title='SpaceX'>
+        <TitleBox title='What we do!'>
           <Text style={styles.paragraph}>SpaceX designs, manufactures and launches advanced rockets and spacecraft. The company was founded in 2002 to revolutionize space technology, with the ultimate goal of enabling people to live on other planets.</Text>
           <AvatarItem title='CEO' subTitle='Elon Musk' imgUri='https://goo.gl/XMx25F' />
           <AvatarItem title='COO' subTitle='Gwynne Shotwell' imgUri='https://goo.gl/JBL9US' />
@@ -117,7 +125,7 @@ export default class App extends Component {
           <Button
             onPress={this.sendUserInformation}
             title="send"
-            color="#841584"
+            color="#181c1f"
             sty
           />
         </TitleBox>
