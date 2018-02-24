@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Button,
   Image,
@@ -27,11 +28,21 @@ export default class App extends Component {
 
   constructor(props) {
     super(props);
-    // code here
+    this.state = {
+      isLoading: true,
+      spacexInfo: null,
+      userName: '',
+      userEmail: ''
+    };
+
     this.goRocketsScreen = this.goRocketsScreen.bind(this);
     this.goCapsulesScreen = this.goCapsulesScreen.bind(this);
     this.goLaunchpadsScreen = this.goLaunchpadsScreen.bind(this);
     this.goLaunchesScreen = this.goLaunchesScreen.bind(this);
+
+    this.onChangeTextName = this.onChangeTextName.bind(this);
+    this.onChangeTextEmail = this.onChangeTextEmail.bind(this);
+    this.sendUserInformation = this.sendUserInformation.bind(this);
   }
 
   goRocketsScreen() {
@@ -50,43 +61,68 @@ export default class App extends Component {
     this.props.navigation.navigate('LaunchesScreen');
   }
 
-  onChangeTextName() {
-    // code here
+  onChangeTextName(text) {
+    this.setState({userName: text});
   }
 
-  onChangeTextEmail() {
-    // code here
+  onChangeTextEmail(text) {
+    this.setState({userEmail: text});
   }
 
   sendUserInformation() {
-    Alert.alert('sendUserInformation');
+    let title;
+    let subtitle;
+
+    if(this.state.userName && this.state.userEmail) {
+      title = `Thanks ${this.state.userName}!`;
+      subtitle = `We will send you information about our next releases to ${this.state.userEmail}`;
+    } else {
+      title = 'Empty fields!';
+      subtitle = 'Complete the information with your name and email.';
+    }
+    
+    Alert.alert(title, subtitle);
+  }
+
+  async componentDidMount() {
+    const response = await fetch('https://api.spacexdata.com/v2/info');
+    const spacexInfo = await response.json();
+    this.setState({ isLoading: false, spacexInfo });
   }
 
   render() {
+    if(this.state.isLoading) {
+      return (
+        <View style={{flex: 1, paddingTop: 20}}>
+          <ActivityIndicator />
+        </View>
+      );
+    } 
+
     return (
       <ScrollView>
         <Image source={{uri: 'https://goo.gl/EVv6yw'}} style={styles.imgCover} />
         <TitleBox title='What we do!'>
-          <Text style={styles.paragraph}>SpaceX designs, manufactures and launches advanced rockets and spacecraft. The company was founded in 2002 to revolutionize space technology, with the ultimate goal of enabling people to live on other planets.</Text>
-          <AvatarItem title='CEO' subTitle='Elon Musk' imgUri='https://goo.gl/XMx25F' />
-          <AvatarItem title='COO' subTitle='Gwynne Shotwell' imgUri='https://goo.gl/JBL9US' />
-          <AvatarItem title='CTO-Propulsion' subTitle='Tom Mueller' imgUri='https://goo.gl/yzSW5z' />
+          <Text style={styles.paragraph}>{this.state.spacexInfo.summary}</Text>
+          <AvatarItem title='CEO' subTitle={this.state.spacexInfo.ceo} imgUri='https://goo.gl/XMx25F' />
+          <AvatarItem title='COO' subTitle={this.state.spacexInfo.coo} imgUri='https://goo.gl/JBL9US' />
+          <AvatarItem title='CTO-Propulsion' subTitle={this.state.spacexInfo.cto_propulsion} imgUri='https://goo.gl/yzSW5z' />
         </TitleBox>
         <Divider />
         <TitleBox title='Headquarters'>
           <Text style={styles.boldText}>
-            address <Text style={styles.normalText}> Rocket Road</Text>
+            address <Text style={styles.normalText}> {this.state.spacexInfo.headquarters.address}</Text>
           </Text>
           <Text style={styles.boldText}>
-            city <Text style={styles.normalText}> Hawthorne</Text>
+            city <Text style={styles.normalText}> {this.state.spacexInfo.headquarters.city}</Text>
           </Text>
           <Text style={styles.boldText}>
-            state <Text style={styles.normalText}> California 🐻</Text>
+            state <Text style={styles.normalText}> {this.state.spacexInfo.headquarters.state} 🐻</Text>
           </Text>
         </TitleBox>
         <Divider />
         <TitleBox title='Valuation'>
-          <Text style={styles.bigText}>$15000000000💰</Text>
+          <Text style={styles.bigText}>${this.state.spacexInfo.valuation}💰</Text>
         </TitleBox>
         <Divider />
         <TitleBox title='More Information'>
@@ -114,13 +150,15 @@ export default class App extends Component {
           <TextInput
             style={styles.textInput}
             placeholder="Type here!"
-            onChangeText={(text) => this.setState({text})}
+            value={this.state.userName}
+            onChangeText={this.onChangeTextName}
           />
           <Text style={styles.textInputLabel}>email</Text>
           <TextInput
             style={styles.textInput}
             placeholder="Type here!"
-            onChangeText={(text) => this.setState({text})}
+            value={this.state.userEmail}
+            onChangeText={this.onChangeTextEmail}
           />
           <Button
             onPress={this.sendUserInformation}
