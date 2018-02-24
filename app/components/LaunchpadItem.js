@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function RocketItem(props) {
+export default function LaunchpadItem(props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{props.name}</Text>
@@ -10,7 +10,7 @@ export default function RocketItem(props) {
         status <Text style={styles.normalText}>{props.status}</Text>
       </Text>
       <Text style={styles.boldText}>
-        vehicles launched <Text style={styles.normalText}>{props.vehiclesLaunched.toString()}</Text>
+        vehicles launched <Text style={styles.normalText}>{props.vehiclesLaunched.join(', ')}</Text>
       </Text>
       <Text style={styles.boldText}>
         region <Text style={styles.normalText}>{props.region}</Text>
